@@ -8,6 +8,8 @@ var cors        = require('cors');
 var apiRoutes         = require('./routes/api.js');
 var fccTestingRoutes  = require('./routes/fcctesting.js');
 var runner            = require('./test-runner');
+var mongoose       = require('mongoose')
+const url             = process.env.DB;
 
 var app = express();
 
@@ -36,6 +38,15 @@ app.route('/')
 
 //For FCC testing purposes
 fccTestingRoutes(app);
+
+  const db = mongoose.connection;
+  db.on('error', console.error.bind(console, 'connection error:'));
+  db.once('open', function() {
+   // we're connected!
+    console.log(db.name,'database successfully connected');
+    //Routing for API 
+    apiRoutes(app);
+  });
 
 //Routing for API 
 apiRoutes(app);
